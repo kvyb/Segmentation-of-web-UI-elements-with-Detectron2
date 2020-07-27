@@ -74,10 +74,14 @@ to graphically visualise and get data about model performance, after training co
 
     $ tensorboard --logdir output
 
+**To Launch Webserver (Express)**
 
+    $ npm install
+then:
 
+    $ npm run dev
 
-
+APP SERVES ON PORT 3000
 
 
 
