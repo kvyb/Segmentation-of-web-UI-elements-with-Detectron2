@@ -126,14 +126,18 @@ print("Starting to output inference results. Predictions below 0.7 score ignored
 #Set the correct format. If using JPG files set *.JPG instead of *.PNG !
 for imageName in glob.glob('content/test/*.PNG'):
 
-    print("{}".format(imageName))
+  #  print("{}".format(imageName))
+   # print("{}".format(my_dataset_train_metadata))
 
     im = cv2.imread(imageName)
     outputs = predictor(im)
     v = Visualizer(im[:, :, ::-1],
+                    #Get class names from dataset train metadata to put on visualization.
                     metadata=my_dataset_train_metadata, 
                     scale=0.5
                     )
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-    cv2.imshow('preview2',out.get_image()[:, :, ::-1])
+    cv2.imshow('Inference Preview',out.get_image()[:, :, ::-1])
     cv2.waitKey(10000)
+
+#Todo: Run test and inference on the same image (1), to get the text output of findings and the image visualization

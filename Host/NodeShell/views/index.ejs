@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<%- include('head.ejs') %>
+  <body>
+    <%- include('header.ejs') %>
+    <main>
+        <div class="container mt-4">
+            <div class="container mt-4">
+            <p>Run model inference with an image.</p>
+            </div>
+        </div>
+        <div class="container mt-4"> 
+            <div class="custom-file">
+                <form action="/form" method="post" enctype="multipart/form-data">
+                    <input type="file" id="picture" class="custom-file-input" name="file">
+                    <label class="custom-file-label" for="customFile">Choose a .PNG image file</label>
+                    <input type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right"></submit>
+                </form>
+            </div>
+        </div>
+    </main>
+    <%- include('footer.ejs') %>
+    <%- include('scripts.ejs') %>
+    <script>
+            $('#picture').on('change',function(){
+                //get the file name
+                var fileName = $(this).val();
+                console.log(fileName)
+                //replace the "Choose a file" label
+                $(this).next('.custom-file-label').html(fileName);
+            })
+    </script>
+  </body>
+
+</html>
