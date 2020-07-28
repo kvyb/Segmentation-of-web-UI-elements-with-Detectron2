@@ -11,7 +11,9 @@ var shell = require('shelljs');
 const app = express()
 app.set("view engine","ejs")
 
+
 // FILE STORAGE
+// This is a middleware general file storage. Images for inference will be copied out of here.
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public')
@@ -24,8 +26,9 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-// SERVE STATIC FILES
+// SERVE STATIC FILES from ./public and ./inferenceContent
 app.use(express.static('public'))
+app.use(express.static('inferenceContent'))
 
 // ROUTES
 app.get('/', (req, res) => {
@@ -35,29 +38,40 @@ app.get('/', (req, res) => {
 app.post('/form', upload.single('file'), async (req, res) => {
     const image = req.file
     //Set path to directory where images will be stored for and used for Protectron2
-    const path = 'importedImages'
+    const inputContentPath = './inferenceContent/input'
+
     console.log(image)
-    if (fs.existsSync(path)) {
-        var { stdout, stderr } = await shell.exec(`cp ${image.path} inferenceContent/input && python inference.py`, function(code, stdout, stderr) {
-            console.log('Exit code:', code);
-            console.log('Program output:', stdout);
-            console.log('Program stderr:', stderr);
+    if (fs.existsSync(inputContentPath)) {
+        //If directory is already present:
+        shell.exec(`cp ${image.path} ${inputContentPath} && python inference.py`, function(code, stdout, stderr) {
+            if (stderr) {
+                console.log('Program stderr:', stderr);
+            } else {
+                console.log('Success!')
+                res.json({
+                    //Output filename is the same. The directory is different, so:
+                    image: `http://localhost:3000/output/${image.filename}`
+                })
+            }
           });
     } else {
-        var { stdout, stderr } = await shell.exec(`mkdir inferenceContent/input || cp ${image.path} inferenceContent/input && python inference.py`, function(code, stdout, stderr) {
-            console.log('Exit code:', code);
-            console.log('Program output:', stdout);
-            console.log('Program stderr:', stderr);
+        //If directory is not present:
+        shell.exec(`mkdir ${inputContentPath} || cp ${image.path} ${inputContentPath}  && python inference.py`, function(code, stdout, stderr) {
+            if (stderr) {
+                console.log('Program stderr:', stderr);
+            } else {
+                console.log('Success!')
+                res.json({
+                    //Output filename is the same. The directory is different, so:
+                    image: `http://localhost:3000/output/${image.filename}`
+                })
+            }
           });
     }
 
 
     //console.log('stdout:', stdout);
     //console.log('stderr:', stderr);
-
-    res.json({
-        image: `http://localhost:3000/${image.filename}`
-    })
 })
 
 // SERVE APPLICATION

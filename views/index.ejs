@@ -11,7 +11,7 @@
         </div>
         <div class="container mt-4"> 
             <div class="custom-file">
-                <form action="/form" method="post" enctype="multipart/form-data">
+                <form id="sendimage" enctype="multipart/form-data">
                     <input type="file" id="picture" class="custom-file-input" name="file">
                     <label class="custom-file-label" for="customFile">Choose a .PNG image file</label>
                     <input type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right"></submit>
@@ -27,8 +27,36 @@
                 var fileName = $(this).val();
                 console.log(fileName)
                 //replace the "Choose a file" label
-                $(this).next('.custom-file-label').html(fileName);
+                $(this).next('.custom-file-label').html(fileName)
             })
+        
+        $(document).ready(function(){
+        //When form is submitted, prevent default behaviour-reload and await response from server.
+            $("#sendimage").on('submit',function(e){
+                e.preventDefault();
+                //encode data
+                var fd = new FormData()
+                var files = $('#picture')[0].files[0];
+                fd.append('file',files)
+
+                $.ajax({
+                    url: '/form',
+                    type: 'post',
+                    data: fd,
+                    contentType: false,
+                    processData: false,
+                    success: function(response){
+                        if(response != 0){
+                            var d = response
+                            console.log(d.image)
+
+                        }else{
+                            alert('file has not been uploaded, check NPM and browser console')
+                        }
+                    }
+                });
+            });
+            });
     </script>
   </body>
 

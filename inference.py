@@ -21,7 +21,6 @@ from detectron2.data import MetadataCatalog
 from detectron2.data.catalog import DatasetCatalog
 from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import Visualizer
-from detectron2.config import get_cfg
 from detectron2.utils.visualizer import ColorMode
 
 
@@ -54,6 +53,8 @@ predictor = DefaultPredictor(cfg)
 
 print("Starting to output inference results. Predictions below confidence score of 0.65 score ignored.")
 #Set the correct format. If using JPG files set *.JPG instead of *.PNG !
+
+
 for imageName in glob.glob('inferenceContent/input/*.png'):
 
     print("{}".format(imageName))
@@ -67,7 +68,11 @@ for imageName in glob.glob('inferenceContent/input/*.png'):
                     scale=1
                     )
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+    # Show images with predictions
     cv2.imshow('Inference Preview',out.get_image()[:, :, ::-1])
+    # Save images with predictions to savePath folder and imageName with path to image removed from name.
+    savePath = './inferenceContent/output'
+    cv2.imwrite(os.path.join(savePath , '{}'.format(os.path.basename(imageName))), out.get_image()[:, :, ::-1])
     cv2.waitKey(1000)
 
 #Todo: Run test and inference on the same image (1), to get the text output of findings and the image visualization
