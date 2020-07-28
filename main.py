@@ -18,6 +18,15 @@ from detectron2.utils.visualizer import Visualizer
 from detectron2.data import MetadataCatalog
 from detectron2.data.catalog import DatasetCatalog
 
+'''
+#set up arguments.
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument("inferenceImage", help="provide image path for inference",
+                    type=str)
+args = parser.parse_args()
+print(args.inferenceImage)
+'''
 from detectron2.data.datasets import register_coco_instances
 register_coco_instances("my_dataset_train", {}, "content/train/_annotations.coco.json", "content/train")
 register_coco_instances("my_dataset_val", {}, "content/valid/_annotations.coco.json", "content/valid")
@@ -35,7 +44,7 @@ for d in random.sample(dataset_dicts, 3):
     visualizer = Visualizer(img[:, :, ::-1], metadata=my_dataset_train_metadata, scale=0.5)
     vis = visualizer.draw_dataset_dict(d)
     cv2.imshow('preview',vis.get_image()[:, :, ::-1])
-    cv2.waitKey(1000)
+    cv2.waitKey(100)
 
 #We are importing our own Trainer Module here to use the COCO validation evaluation 
 #during training. Otherwise no validation eval occurs.
@@ -101,6 +110,7 @@ trainer.train()
 
 from detectron2.data import DatasetCatalog, MetadataCatalog, build_detection_test_loader
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+
 # Run evaluation on the test set. Set the test and val sets appropriately..
 
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
@@ -112,21 +122,23 @@ inference_on_dataset(trainer.model, val_loader, evaluator)
 
 print("Evaluation on test set finished")
 
-"""# Inference with Detectron2 Saved Weights"""
+"""# Inference with Detectron2 Saved Weights on a previously unknown image"""
 
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")
 cfg.DATASETS.TEST = ("my_dataset_test", )
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set the testing threshold for this model
+# set the testing threshold for this model
+threshold = 0.65
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = threshold   
 predictor = DefaultPredictor(cfg)
 test_metadata = MetadataCatalog.get("my_dataset_test")
 from detectron2.utils.visualizer import ColorMode
 import glob
 
-print("Starting to output inference results. Predictions below 0.7 score ignored.")
-#Set the correct format. If using JPG files set *.JPG instead of *.PNG !
-for imageName in glob.glob('content/test/*.PNG'):
+print("Starting to output inference results. Predictions below confidence score of {} score ignored.".format(threshold))
+#Set the correct format. If using JPG files set *.JPG instead of *.PNG ! Also it's case sensitive!
+for imageName in glob.glob('content/valid/*.PNG'):
 
-  #  print("{}".format(imageName))
+    print("{}".format(imageName))
    # print("{}".format(my_dataset_train_metadata))
 
     im = cv2.imread(imageName)
@@ -134,7 +146,7 @@ for imageName in glob.glob('content/test/*.PNG'):
     v = Visualizer(im[:, :, ::-1],
                     #Get class names from dataset train metadata to put on visualization.
                     metadata=my_dataset_train_metadata, 
-                    scale=0.5
+                    scale=1
                     )
     out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
     cv2.imshow('Inference Preview',out.get_image()[:, :, ::-1])
