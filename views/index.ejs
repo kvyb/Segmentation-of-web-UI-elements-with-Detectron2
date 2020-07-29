@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <%- include('head.ejs') %>
-  <body>
+  <body style="background-color:#E5E5E5 !important;">
     <%- include('header.ejs') %>
     <main>
         <div class="container mt-4">
@@ -9,7 +9,7 @@
             <p>Run model inference with an image.</p>
             </div>
         </div>
-        <div class="container mt-4"> 
+        <div class="container mt-4 mb-4"> 
             <div class="custom-file">
                 <form id="sendimage" enctype="multipart/form-data">
                     <input type="file" id="picture" class="custom-file-input" name="file">
@@ -18,6 +18,29 @@
                 </form>
             </div>
         </div>
+        <div class="container mt-4 pt-4">
+            <div class="container mt-4">
+                <p>Results:</p>
+            </div>
+                <!--Populate with items from imageUrls-->
+            <div class="row mt-6">
+                <% imageUrls.forEach(function(item) { %>
+                    
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <h5 class="card-title">Card title</h5>
+                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+                                <p class="card-text"><small class="text-muted">some more text</small></p>
+                            </div>
+                            <a href="<%= item.value %>" target="_blank">
+                                <img src="<%= item.value %>" class="card-img-top border border-primary" alt="Inference result image">
+                            </a>
+                        </div>
+                    
+                <% }); %>
+            </div>
+        </div>
+        <hr/>
     </main>
     <%- include('footer.ejs') %>
     <%- include('scripts.ejs') %>
@@ -34,7 +57,7 @@
         //When form is submitted, prevent default behaviour-reload and await response from server.
             $("#sendimage").on('submit',function(e){
                 e.preventDefault();
-                //encode data
+                //encode data from form
                 var fd = new FormData()
                 var files = $('#picture')[0].files[0];
                 fd.append('file',files)
@@ -45,11 +68,11 @@
                     data: fd,
                     contentType: false,
                     processData: false,
+                    //server waits until the inference and shell finish. Only after a success message arrives.
                     success: function(response){
-                        if(response != 0){
-                            var d = response
-                            console.log(d.image)
-
+                        if(response){
+                            //reload when inference finished
+                            window.location.reload();
                         }else{
                             alert('file has not been uploaded, check NPM and browser console')
                         }

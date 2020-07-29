@@ -4,6 +4,7 @@ const mime = require('mime-types')
 const shortid = require('shortid')
 const { exec } = require('child_process')
 const fs = require('fs')
+const path = require('path')
 var shell = require('shelljs');
 
 
@@ -11,15 +12,17 @@ var shell = require('shelljs');
 const app = express()
 app.set("view engine","ejs")
 
-
 // FILE STORAGE
 // This is a middleware general file storage. Images for inference will be copied out of here.
 const storage = multer.diskStorage({
+    //Handle default uploaded image destination.
     destination: function (req, file, cb) {
         cb(null, 'public')
     },
+    //Handle uploaded image names by assigning a short id and extension.
+    //todo: make items sortable.
     filename: function (req, file, cb) {
-        let id = shortid.generate()
+        let id = Date.now()+shortid.generate()
         let ext = mime.extension(file.mimetype)
         cb(null, `${id}.${ext}`)
     }
@@ -30,9 +33,51 @@ const upload = multer({ storage })
 app.use(express.static('public'))
 app.use(express.static('inferenceContent'))
 
+
+
+
 // ROUTES
 app.get('/', (req, res) => {
-    res.render("index");
+
+    //joining path of directory 
+
+    const directoryPath = './inferenceContent/output/'
+    const directoryShortPath = '/output/'
+
+
+    
+    //Passing directoryPath and callback function
+    fs.readdir(directoryPath, function (err, files) {
+
+        //handling error
+        if (err) {
+            console.log('Unable to find directory: ' + err + '. Output directory must exist in inferenceContent directory.');
+        } 
+        
+        //set up array to store links to images, to show on main screen.
+        var imageUrls = [];
+        //push all files as dictionaries into list to easily parse them into .ejs template. Using forEach. :
+        if (files) {
+            files.forEach(function (file) {
+                //unshift newer images to appear on top, to avoid having to sort on client.
+                imageUrls.unshift({
+                    key: 'image',
+                    value: directoryShortPath+file
+                })
+            })
+
+        //if there are no files in directory:
+        } else {
+            console.log('No images to fetch from output directory. Upload an image for inference.')
+        }
+
+        //output list of images present at home directory load. Pass object as itself to index.ejs.
+        res.render('index', {
+            imageUrls: imageUrls
+        })
+
+    })
+    
 })
 
 app.post('/form', upload.single('file'), async (req, res) => {
@@ -56,7 +101,7 @@ app.post('/form', upload.single('file'), async (req, res) => {
           });
     } else {
         //If directory is not present:
-        shell.exec(`mkdir ${inputContentPath} || cp ${image.path} ${inputContentPath}  && python inference.py`, function(code, stdout, stderr) {
+        shell.exec(`mkdir ${inputContentPath} && cp ${image.path} ${inputContentPath}  && python inference.py`, function(code, stdout, stderr) {
             if (stderr) {
                 console.log('Program stderr:', stderr);
             } else {
