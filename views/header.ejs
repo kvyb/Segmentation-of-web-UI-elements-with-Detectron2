@@ -6,27 +6,17 @@
         </h1>
     </div>
     <div class="container mt-4">
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-            <a class="nav-link active" href="#">Active</a>
-            </li>
-            <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#">Separated link</a>
+        <div class="dropdown">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Category
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              <a class="dropdown-item active" href="#">Page - Contact Us</a>
+              <a class="dropdown-item" href="#">Page - About</a>
+              <a class="dropdown-item" href="#">Page - Products</a>
+              <a class="dropdown-item" href="#">Page - Homepage</a>
+              <a class="dropdown-item" href="#">Page - Blog</a>
             </div>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-            </li>
-            <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-            </li>
-        </ul>
-        <span class="badge badge-pill badge-success mt-4">Localhost working</span>
+        </div>
     </div>
 </header>

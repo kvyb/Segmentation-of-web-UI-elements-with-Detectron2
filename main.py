@@ -139,7 +139,6 @@ print("Starting to output inference results. Predictions below confidence score 
 for imageName in glob.glob('content/valid/*.PNG'):
 
     print("{}".format(imageName))
-   # print("{}".format(my_dataset_train_metadata))
 
     im = cv2.imread(imageName)
     outputs = predictor(im)
