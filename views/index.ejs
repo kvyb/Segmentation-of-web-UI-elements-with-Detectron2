@@ -14,13 +14,16 @@
                 <form id="sendimage" enctype="multipart/form-data">
                     <input type="file" id="picture" class="custom-file-input" name="file">
                     <label class="custom-file-label" for="customFile">Choose a .PNG image file</label>
-                    <input type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right"></submit>
+                    <button type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right">
+                    <span class="" id="loader" role="status" aria-hidden="true"></span>
+                    Submit
+                    </button>
                 </form>
             </div>
         </div>
         <div class="container mt-4 pt-4">
             <div class="container mt-4">
-                <p>Results:</p>
+                <h3>Inference Results:</h3>
             </div>
                 <!--Populate with items from imageUrls-->
             <div class="row mt-6">
@@ -57,29 +60,43 @@
         //When form is submitted, prevent default behaviour-reload and await response from server.
             $("#sendimage").on('submit',function(e){
                 e.preventDefault();
-                //encode data from form
-                var fd = new FormData()
-                var files = $('#picture')[0].files[0];
-                fd.append('file',files)
+                
 
-                $.ajax({
-                    url: '/form',
-                    type: 'post',
-                    data: fd,
-                    contentType: false,
-                    processData: false,
-                    //server waits until the inference and shell finish. Only after a success message arrives.
-                    success: function(response){
-                        if(response){
-                            //reload when inference finished
-                            window.location.reload();
-                        }else{
-                            alert('file has not been uploaded, check NPM and browser console')
+                
+                
+                //Encode data from form
+                var fd = new FormData()
+                var files = $('#picture')[0].files[0]
+                console.log(files)
+                fd.append('file',files)
+                if (files != undefined) {
+                    //Show loader
+                    $("#loader").addClass("spinner-border spinner-border-sm");
+                    //Post data
+                    $.ajax({
+                        url: '/form',
+                        type: 'post',
+                        data: fd,
+                        contentType: false,
+                        processData: false,
+                        //Server waits until the inference and shell finish. Only after a success message arrives.
+                        success: function(response){
+                            if(response){
+                                //Remove loader
+                                $("#loader").removeClass("spinner-border spinner-border-sm");
+                                //Reload when new inference results obtained
+                                window.location.reload();
+                            }else{
+                                alert('file has not been uploaded, check NPM, terminal and browser console')
+                                $("#loader").removeClass("spinner-border spinner-border-sm");
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    alert("No image selected for upload.")
+                }
             });
-            });
+        });
     </script>
   </body>
 
