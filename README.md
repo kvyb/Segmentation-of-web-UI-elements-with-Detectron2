@@ -1,5 +1,13 @@
 # Readme
 
+## Overview
+
+This is a custom implementation of Detectron2 Fast-RCNN, which can find elements - buttons, titles, different input fields and much more - in any web design prototype or web UI image. 
+
+The implementation comes with a client, which can be used locally, to quickly and easily upload images for inference and get visualised results. The client creates directories and manages images, runs shell scripts and helps to visualise output data. It also serves as a proof-of-concept implementation of complex machine learning technologies in a user-friendly and highly accessible format to all users.
+
+# Installation
+
 ## Install Cuda and cuDNN
 
 Below is the setup process. Assuming you have Ubuntu 20.04 installed with an Nvidia GPU available.
