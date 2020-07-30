@@ -82,7 +82,7 @@ for imageName in glob.glob('inferenceContent/input/*.png'):
     imagePredBoxes = outputs["instances"].pred_boxes
     imagePredScores = outputs["instances"].scores
 
-    #Initialise a dictionary and store inference data (labels with class name and prediction score) for each image.
+    #Initialise a dictionary and store inference data (labels with class name and prediction score) for each:
     imageDataArray = {imageBaseName: []}
     imageDataArray[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
     print(imageDataArray)

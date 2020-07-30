@@ -82,7 +82,7 @@ app.get('/', (req, res) => {
 
 app.post('/form', upload.single('file'), async (req, res) => {
     const image = req.file
-    //Set path to directory where images will be stored for and used for Protectron2
+    //Set path to directory where images will be stored for and used for Protectron2 operations.
     const inputContentPath = './inferenceContent/input'
 
     console.log(image)
