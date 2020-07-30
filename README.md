@@ -65,33 +65,34 @@ See also Detectron2 [installation guide](https://github.com/facebookresearch/det
   
 
 **Note:**
-Ensure that the eval set contains at least 1 instance of all classes that can be encountered in the training dataset:
+If using a different dataset, ensure that the eval set contains at least 1 instance of all classes that can be encountered in the training dataset:
 
     cfg.DATASETS.TEST = ("my_dataset_val",
 
 
 Otherwise the validation step will fail at EVAL_PERIOD.
 
-Also make sure that your data is marked according to COCO standard. A good tool to use is the [VGG annotator](http://www.robots.ox.ac.uk/~vgg/software/via/via_demo.html) (export annotations to COCO json).
+Also, if you want to use a different dataset than the one provided, make sure that your data is marked according to COCO standard. A good tool to use is the [VGG annotator](http://www.robots.ox.ac.uk/~vgg/software/via/via_demo.html) (export annotations to COCO json).
   
 **Run from conda virtual env:**
+The model weights are not included in this repository, since the trained weights are too large. Hence, it is necessary to train the model before launching the web client and doing inference:
 
     $ python main.py
 
-  
+Alternatively the weights can be downloaded here: 'link' - and placed within 'output/' directory.
 **Output:**
-to graphically visualise and get data about model performance, after training completes, run:
+to graphically visualise and get very detailed data about model performance, after training completes, run:
 
     $ tensorboard --logdir output
 
-## To Launch Webserver (Express)
+## To Launch Web Client (NodeJS,ExpressJS)
 
     $ npm install
 then:
 
     $ npm run dev
 
-APP SERVES ON PORT 3000
+The app will then be ready and serve on port 3000
 
 
 
