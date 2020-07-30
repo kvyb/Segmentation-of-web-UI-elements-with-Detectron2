@@ -4,7 +4,9 @@
 
 This is a custom implementation of Detectron2 Fast-RCNN, which can find elements - buttons, titles, different input fields and much more - in any web design prototype or web UI image. 
 
-The implementation comes with a client, which can be used locally, to quickly and easily upload images for inference and get visualised results. The client creates directories and manages images, runs shell scripts and helps to visualise output data. It also serves as a proof-of-concept implementation of complex machine learning technologies in a user-friendly and highly accessible format to all users.
+The implementation comes with a client, which can be used locally, to quickly and easily upload images for inference and get visualised results. The client creates directories and manages images, runs shell scripts and helps to visualise output data. It also serves as a proof-of-concept implementation of complex machine learning technologies in a user-friendly and highly accessible format for all users.
+
+This project aims to show that it is possible to visually analyse UI design prototype structure automatically using RCNN technology. Furthermore, it shows that this functionality and its value can be served online (if hosted on a webserver) and can be used by interested users (designers) in the browser.
 
 # Installation
 
