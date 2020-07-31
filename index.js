@@ -83,12 +83,12 @@ app.get('/', (req, res) => {
 app.post('/form', upload.single('file'), async (req, res) => {
     const image = req.file
     //Set path to directory where images will be stored for and used for Protectron2 operations.
-    const inputContentPath = './inferenceContent/input'
-
-    console.log(image)
+    const inputContentPath = './inferenceContent/input/'
+    const imageNamePath = inputContentPath+image.filename
+    console.log(imageNamePath)
     if (fs.existsSync(inputContentPath)) {
         //If directory is already present:
-        shell.exec(`cp ${image.path} ${inputContentPath} && python inference.py`, function(code, stdout, stderr) {
+        shell.exec(`cp ${image.path} ${inputContentPath} && python inferenceSingle.py --image ${imageNamePath}`, function(code, stdout, stderr) {
             if (stderr) {
                 console.log('Program stderr:', stderr);
             } else {
@@ -101,7 +101,7 @@ app.post('/form', upload.single('file'), async (req, res) => {
           });
     } else {
         //If directory is not present:
-        shell.exec(`mkdir ${inputContentPath} && cp ${image.path} ${inputContentPath}  && python inference.py`, function(code, stdout, stderr) {
+        shell.exec(`mkdir ${inputContentPath} && cp ${image.path} ${inputContentPath}  && python inferenceSingle.py --image ${imageNamePath}`, function(code, stdout, stderr) {
             if (stderr) {
                 console.log('Program stderr:', stderr);
             } else {
