@@ -44,8 +44,6 @@ app.get('/', (req, res) => {
     const directoryPath = './inferenceContent/output/'
     const directoryShortPath = '/output/'
 
-
-    
     //Passing directoryPath and callback function
     fs.readdir(directoryPath, function (err, files) {
 

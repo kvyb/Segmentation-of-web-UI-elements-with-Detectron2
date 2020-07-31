@@ -63,18 +63,19 @@ print("Starting to output inference results. Predictions below confidence score 
 
 #Initialise file for inference output data:
 import json
+dataCollection = {}
 #Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
 AllClasses = my_dataset_train_metadata.thing_classes
-#add this to json object on top, if not there already.
+#add this to json object, if not there already.
+dataCollection['AllClasses'] = AllClasses
 
 #Get name of uploaded image from argument. Nodejs launches shell script with filled argument. argument stored in imageName, similarly to standard batch inference.
 imageName = args.image
-
 if imageName:
     #Get uploaded image name without path so we can save to JSON conveniently.
-    print(imageName)
+    print("Running inference on image name with path: {}".format(imageName))
     imageBaseName = format(os.path.basename(imageName))
-    print(imageBaseName)
+    print("Image base name: {}".format(imageBaseName))
 
     im = cv2.imread(imageName)
     outputs = predictor(im)
@@ -91,10 +92,17 @@ if imageName:
     imagePredScores = outputs["instances"].scores
 
     #Initialise a dictionary and store inference data (labels with class name and prediction score) for each:
-    imageDataArray = {imageBaseName: []}
-    imageDataArray[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
-    print(imageDataArray)
+    imageData = {imageBaseName: []}
+    imageData[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
+    
+    if not os.path.exists('inferenceContent/outputData'):
+        os.mkdir('inferenceContent/outputData')
+    
+    dataCollectionOut = {**dataCollection, **imageData}
+    print(dataCollectionOut)
 
+    with open('inferenceContent/outputData/outputData.json', 'w') as jsonFile:
+        json.dump(dataCollectionOut, jsonFile)
     #data in it. As it loops through all images it will fill the JSON with needed data.
 
     # Show images with predictions in system window. If not using host, then:
