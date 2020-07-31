@@ -63,11 +63,22 @@ print("Starting to output inference results. Predictions below confidence score 
 
 #Initialise file for inference output data:
 import json
-dataCollection = {}
+
+#check if file has been written previously, and load it to be later merged with output data from new file
+if os.path.exists('inferenceContent/outputData/outputData.json'):
+    with open('inferenceContent/outputData/outputData.json', 'r') as jsonFile:
+        dataCollection = json.load(jsonFile)
+
+#if the file has not been yet initialised, or does not exist, write it with metadata to alter merge with output data from new file
+else:
+    dataCollection = {}
+    AllClasses = my_dataset_train_metadata.thing_classes
+    #add this to json object, if not there already.
+    dataCollection['AllClasses'] = AllClasses
+
+
 #Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
-AllClasses = my_dataset_train_metadata.thing_classes
-#add this to json object, if not there already.
-dataCollection['AllClasses'] = AllClasses
+
 
 #Get name of uploaded image from argument. Nodejs launches shell script with filled argument. argument stored in imageName, similarly to standard batch inference.
 imageName = args.image

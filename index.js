@@ -53,9 +53,21 @@ app.get('/', (req, res) => {
         } 
         
         //set up array to store links to images, to show on main screen.
-        var imageUrls = [];
+        var imageUrls = []
+        var outputData = ''
         //push all files as dictionaries into list to easily parse them into .ejs template. Using forEach. :
         if (files) {
+            var outputDataFilePath = 'inferenceContent/outputData/outputData.json'
+            if(!fs.existsSync(outputDataFilePath)) {
+                console.log("No inference output to display yet.");
+              }
+            else {
+                fs.readFile(outputDataFilePath, (err, data) => {
+                    if (err) throw err
+                    outputData = JSON.parse(data)
+                    console.log(outputData)
+                });
+              } 
             files.forEach(function (file) {
                 //unshift newer images to appear on top, to avoid having to sort on client.
                 imageUrls.unshift({
@@ -69,9 +81,12 @@ app.get('/', (req, res) => {
             console.log('No images to fetch from output directory. Upload an image for inference.')
         }
 
+        //combine both data objects: imageUrls and outputData - into one, to be able to render index.ejs with them.
+        
         //output list of images present at home directory load. Pass object as itself to index.ejs.
         res.render('index', {
-            imageUrls: imageUrls
+            imageUrls,
+            outputData
         })
 
     })
@@ -88,7 +103,7 @@ app.post('/form', upload.single('file'), async (req, res) => {
         //If directory is already present:
         shell.exec(`cp ${image.path} ${inputContentPath} && python inferenceSingle.py --image ${imageNamePath}`, function(code, stdout, stderr) {
             if (stderr) {
-                console.log('Program stderr:', stderr);
+                console.log('Program stderr:', stderr)
             } else {
                 console.log('Success!')
                 res.json({
@@ -101,7 +116,7 @@ app.post('/form', upload.single('file'), async (req, res) => {
         //If directory is not present:
         shell.exec(`mkdir ${inputContentPath} && cp ${image.path} ${inputContentPath}  && python inferenceSingle.py --image ${imageNamePath}`, function(code, stdout, stderr) {
             if (stderr) {
-                console.log('Program stderr:', stderr);
+                console.log('Program stderr:', stderr)
             } else {
                 console.log('Success!')
                 res.json({
