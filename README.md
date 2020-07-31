@@ -43,7 +43,7 @@ See [cheatsheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a956
 
 With conda environment activated:
 
-    $ pip install tensorflow-gpu==2.2.0rc2
+    $ pip install tensorflow-gpu==2.2.0
 
 To install correct pytorch and torchvision do this with conda activated environment:
 
