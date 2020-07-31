@@ -35,7 +35,7 @@ then navigate to that folder's /include folder and:
   
   
 
-## Activate conda venv with tensorflow-gpu==2.2.0
+## Activate conda venv
 
 ensure that conda is initialised with Python 3.8.3 (set it within conda environment creation). 
 
@@ -47,7 +47,7 @@ With conda environment activated:
 
 To install correct pytorch and torchvision do this with conda activated environment:
 
-    $ conda install pytorch torchvision cudatoolkit=10.1 -c pytorch
+    $ conda install -c pytorch torchvision cudatoolkit=10.1 pytorch
 
 Check that GPU is available and working. In virtual environment `$ python`:
 
@@ -59,10 +59,11 @@ Then install some Detectron2 dependencies:
 
     $ pip install cython pyyaml==5.1
     $ pip install pycocotools>=2.0.1
+    $ pip install opencv-python
 
 Then install Detectron2:
 
-    $ python pip install detectron2==0.1.3 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html 
+    $ python -m pip install detectron2 -f \https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html
 
 If the above does not work, or running 'python main.py' gives erros try this:
 

@@ -81,15 +81,9 @@
                         processData: false,
                         //Server waits until the inference and shell finish. Only after a success message arrives.
                         success: function(response){
-                            if(response){
-                                //Remove loader
-                                $("#loader").removeClass("spinner-border spinner-border-sm");
-                                //Reload when new inference results obtained
-                                window.location.reload();
-                            }else{
-                                alert('file has not been uploaded, check NPM, terminal and browser console')
-                                $("#loader").removeClass("spinner-border spinner-border-sm");
-                            }
+                            $("#loader").removeClass("spinner-border spinner-border-sm");
+                            //Reload when new inference results obtained
+                            window.location.reload();
                         }
                     });
                 } else {

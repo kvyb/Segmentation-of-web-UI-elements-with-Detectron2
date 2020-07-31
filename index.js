@@ -145,9 +145,12 @@ app.post('/form', upload.single('file'), async (req, res) => {
         shell.exec(`cp ${image.path} ${inputContentPath} && python inferenceSingle.py --image ${imageNamePath}`, function (code, stdout, stderr) {
             if (stderr) {
                 console.log('Program stderr:', stderr)
+                return res.json({
+                    success: false
+                })
             } else {
                 console.log('Success!')
-                res.json({
+                return res.json({
                     //Output filename is the same. The directory is different, so:
                     image: `http://localhost:3000/output/${image.filename}`
                 })
@@ -158,9 +161,12 @@ app.post('/form', upload.single('file'), async (req, res) => {
         shell.exec(`mkdir ${inputContentPath} && cp ${image.path} ${inputContentPath}  && python inferenceSingle.py --image ${imageNamePath}`, function (code, stdout, stderr) {
             if (stderr) {
                 console.log('Program stderr:', stderr)
+                return res.json({
+                    success: false
+                })
             } else {
                 console.log('Success!')
-                res.json({
+                return res.json({
                     //Output filename is the same. The directory is different, so:
                     image: `http://localhost:3000/output/${image.filename}`
                 })
