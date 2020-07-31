@@ -75,7 +75,7 @@ else:
     AllClasses = my_dataset_train_metadata.thing_classes
     #add this to json object, if not there already.
     dataCollection['AllClasses'] = AllClasses
-
+    dataCollection['Images'] = []
 
 #Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
 
