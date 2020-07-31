@@ -75,6 +75,8 @@ else:
     AllClasses = my_dataset_train_metadata.thing_classes
     #add this to json object, if not there already.
     dataCollection['AllClasses'] = AllClasses
+    #initialize empty dict to store image inference ouput results in the future
+    dataCollection['imageData'] = {}
 #Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
 
 
@@ -100,20 +102,15 @@ if imageName:
     imagePredBoxes = outputs["instances"].pred_boxes
     imagePredScores = outputs["instances"].scores
 
-    #Initialise a dictionary and store inference data (labels with class name and prediction score) for each:
-    imageData = {imageBaseName: []}
-    imageData[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
+    #previously initialised dict for storing image output. Inside it make another key:value pair with key as image name, and value as inference output values array.
+    dataCollection['imageData'][imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
 
     
     if not os.path.exists('inferenceContent/outputData'):
         os.mkdir('inferenceContent/outputData')
-    
-    dataCollectionOut = {**dataCollection, **imageData}
-
-    print(dataCollectionOut)
 
     with open('inferenceContent/outputData/outputData.json', 'w') as jsonFile:
-        json.dump(dataCollectionOut, jsonFile)
+        json.dump(dataCollection, jsonFile)
     #data in it. As it loops through all images it will fill the JSON with needed data.
 
     # Show images with predictions in system window. If not using host, then:
