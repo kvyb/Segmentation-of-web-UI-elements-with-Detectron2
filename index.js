@@ -69,8 +69,43 @@ app.get('/', (req, res) => {
             } else {
                 try {
                     outputData = await readFileAsync(outputDataFilePath)
-                    
+                    let result = {}
+                    // Map objects
+                    Object.keys(outputData.imageData).forEach(key => {
+                        let items = outputData.imageData[key]
+                        items.forEach(item => {
+                            let itemClassName = item.split(' ')[0]
+                            let itemClassValue = item.split(' ')[1]
+                            if (outputData.AllClasses.includes(itemClassName)) {
+                                if (itemClassName in result) {
+                                    result[itemClassName].count++
+                                    result[itemClassName].values.push(itemClassValue)
+                                } else {
+                                    let value = { count: 1, values: [itemClassValue], average: 0 }
+                                    result[itemClassName] = value
+                                }
+                            }
+                        })
+                    })
+
+                    // Count average percentage
+
+                    Object.keys(result).forEach(key => {
+                        let item = result[key]
+                        if (item.count > 1) {
+                            let total = item.values.reduce((acc, value) => {
+                                return acc + parseInt(value.split('%')[0])
+                            }, 0)
+                            let average = total / item.values.length
+                            result[key].average = average
+                        } else {
+                            result[key].average = parseInt(item.values[0].split('%')[0])
+                        }
+                    })
+
+                    console.log(result)
                     console.log(outputData)
+
                 } catch (error) {
                     throw error
                 }
@@ -88,10 +123,7 @@ app.get('/', (req, res) => {
             console.log('No images to fetch from output directory. Upload an image for inference.')
         }
 
-        //combine both data objects: imageUrls and outputData - into one, to be able to render index.ejs with them.
-
         //output list of images present at home directory load. Pass object as itself to index.ejs.
-        console.log("outputData:", outputData)
         res.render('index', {
             imageUrls,
             outputData
@@ -101,15 +133,6 @@ app.get('/', (req, res) => {
 
 })
 
-
-function readFileAsync(path) {
-    return new Promise((resolve, reject) => {
-        fs.readFile(path, (err, data) => {
-            if (err) reject(err)
-            resolve(JSON.parse(data))
-        })
-    })
-}
 
 app.post('/form', upload.single('file'), async (req, res) => {
     const image = req.file
