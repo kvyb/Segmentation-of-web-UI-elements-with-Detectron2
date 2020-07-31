@@ -1,4 +1,4 @@
 *.pth
-output/
+output/*
 node_modules/
 test.py
