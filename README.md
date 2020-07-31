@@ -65,7 +65,7 @@ See also Detectron2 [installation guide](https://github.com/facebookresearch/det
   
 
 **Note:**
-If using a different dataset, ensure that the eval set contains at least 1 instance of all classes that can be encountered in the training dataset:
+If using a different dataset than the one provided in this repository, ensure that the eval set contains at least 1 instance of all classes that can be encountered in the training dataset:
 
     cfg.DATASETS.TEST = ("my_dataset_val",
 
