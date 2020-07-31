@@ -26,8 +26,8 @@ from detectron2.data.datasets import register_coco_instances
 from detectron2.utils.visualizer import ColorMode
 
 #Setup arguments
-parser = argparse.ArgumentParser()
-parser.add_argument('--image', required=True)
+parser = argparse.ArgumentParser(usage="run inference on one specified image")
+parser.add_argument('--image', required=True, help="relative path to image to run inference on")
 args = parser.parse_args()
 
 #Register dataset annotations in coco format. This is important for metadata used by Detectron, for example in inference.
@@ -63,18 +63,30 @@ print("Starting to output inference results. Predictions below confidence score 
 
 #Initialise file for inference output data:
 import json
-#Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
-AllClasses = my_dataset_train_metadata.thing_classes
-#add this to json object on top, if not there already.
 
-#Set the correct format. If using JPG files set *.JPG instead of *.PNG !
-#Currently, when inferencing, all images in folder are inferenced every time.
-#This is not optimal.
+#check if file has been written previously, and load it to be later merged with output data from new file
+if os.path.exists('inferenceContent/outputData/outputData.json'):
+    with open('inferenceContent/outputData/outputData.json', 'r') as jsonFile:
+        dataCollection = json.load(jsonFile)
+
+#if the file has not been yet initialised, or does not exist, write it with metadata to alter merge with output data from new file
+else:
+    dataCollection = {}
+    AllClasses = my_dataset_train_metadata.thing_classes
+    #add this to json object, if not there already.
+    dataCollection['AllClasses'] = AllClasses
+    #initialize empty dict to store image inference ouput results in the future
+    dataCollection['imageData'] = {}
+#Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
+
+
+#Get name of uploaded image from argument. Nodejs launches shell script with filled argument. argument stored in imageName, similarly to standard batch inference.
 imageName = args.image
-for imageName in glob.glob('inferenceContent/input/*'):
+if imageName:
+    #Get uploaded image name without path so we can save to JSON conveniently.
+    print("Running inference on image name with path: {}".format(imageName))
     imageBaseName = format(os.path.basename(imageName))
-    print(imageBaseName)
-   # print("{}".format(my_dataset_train_metadata))
+    print("Image base name: {}".format(imageBaseName))
 
     im = cv2.imread(imageName)
     outputs = predictor(im)
@@ -90,11 +102,15 @@ for imageName in glob.glob('inferenceContent/input/*'):
     imagePredBoxes = outputs["instances"].pred_boxes
     imagePredScores = outputs["instances"].scores
 
-    #Initialise a dictionary and store inference data (labels with class name and prediction score) for each:
-    imageDataArray = {imageBaseName: []}
-    imageDataArray[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
-    print(imageDataArray)
+    #previously initialised dict for storing image output. Inside it make another key:value pair with key as image name, and value as inference output values array.
+    dataCollection['imageData'][imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
 
+    
+    if not os.path.exists('inferenceContent/outputData'):
+        os.mkdir('inferenceContent/outputData')
+
+    with open('inferenceContent/outputData/outputData.json', 'w') as jsonFile:
+        json.dump(dataCollection, jsonFile)
     #data in it. As it loops through all images it will fill the JSON with needed data.
 
     # Show images with predictions in system window. If not using host, then:
