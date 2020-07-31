@@ -37,10 +37,13 @@ then navigate to that folder's /include folder and:
 
 ## Activate conda venv with tensorflow-gpu==2.2.0
 
-ensure that conda is initialised with Python 3.8.3 (set it within conda environment creation).
+ensure that conda is initialised with Python 3.8.3 (set it within conda environment creation). 
 
 See [cheatsheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf) !
-  
+
+With conda environment activated:
+
+    $ pip install tensorflow-gpu==2.2.0rc2
 
 To install correct pytorch and torchvision do this with conda activated environment:
 
