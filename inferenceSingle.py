@@ -75,8 +75,7 @@ else:
     AllClasses = my_dataset_train_metadata.thing_classes
     #add this to json object, if not there already.
     dataCollection['AllClasses'] = AllClasses
-    dataCollection['Images'] = []
-
+    dataCollection['imageData'] = []
 #Get all available classes for this dataset from training metadata. Needed to make counts for each class in inference results.
 
 
@@ -103,13 +102,15 @@ if imageName:
     imagePredScores = outputs["instances"].scores
 
     #Initialise a dictionary and store inference data (labels with class name and prediction score) for each:
-    imageData = {imageBaseName: []}
-    imageData[imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
+    imageData = {imageBaseName: [_create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))]}
+    imageDataOut = {}
+    imageDataOut['imageData'] = {**dataCollection['imageData'], **imageData}
+    dataCollectionOut = {**dataCollection, **imageDataOut}    
     
     if not os.path.exists('inferenceContent/outputData'):
         os.mkdir('inferenceContent/outputData')
     
-    dataCollectionOut = {**dataCollection, **imageData}
+
     print(dataCollectionOut)
 
     with open('inferenceContent/outputData/outputData.json', 'w') as jsonFile:
