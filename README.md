@@ -58,16 +58,12 @@ Check that GPU is available and working. In virtual environment `$ python`:
 Then install some Detectron2 dependencies:
 
     $ pip install cython pyyaml==5.1
-    $ pip install pycocotools>=2.0.1
+    $ pip install pycocotools
     $ pip install opencv-python
 
 Then install Detectron2:
 
-    $ python -m pip install detectron2 -f \https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.5/index.html
-
-If the above does not work, or running 'python main.py' gives erros try this:
-
-    $ python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+    $ python -m pip install detectron2==0.2.1 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html$ python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
 
 For more information see also Detectron2 [installation guide](https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md). 
 
