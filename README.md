@@ -63,7 +63,7 @@ Then install some Detectron2 dependencies:
 
 Then install Detectron2:
 
-    $ python -m pip install detectron2==0.2.1 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html$ python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
+    $ python -m pip install detectron2==0.2.1 -f https://dl.fbaipublicfiles.com/detectron2/wheels/cu101/torch1.6/index.html 
 
 For more information see also Detectron2 [installation guide](https://github.com/facebookresearch/detectron2/blob/master/INSTALL.md). 
 
