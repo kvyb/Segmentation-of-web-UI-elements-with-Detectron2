@@ -6,13 +6,13 @@
     <main>
         <div class="container mt-4">
             <div class="container mt-4">
-            <p>Run model inference with an image.</p>
+            <h4>Run model inference with an image:</h4>
             </div>
         </div>
         <div class="container mt-4 mb-4"> 
             <div class="custom-file">
                 <form id="sendimage" enctype="multipart/form-data">
-                    <input type="file" id="picture" class="custom-file-input" name="file">
+                    <input type="file" id="image" class="custom-file-input" name="file">
                     <label class="custom-file-label" for="customFile">Choose a .PNG image file</label>
                     <button type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right">
                     <span class="" id="loader" role="status" aria-hidden="true"></span>
@@ -22,21 +22,47 @@
             </div>
         </div>
         <div class="container mt-4 pt-4">
+            <div class="mt-4 pt-4 mb-4 pb-4 table-responsive">
+                <table id="summary" class="table" data-toggle="table" data-pagination="true">
+                    <thead class="thead-light">
+                      <tr>
+                        <th scope="col"></th>
+                        <th data-sortable="true" data-field="className" scope="col">Class Name</th>
+                        <th data-sortable="true" data-field="classCount" scope="col">Class Count</th>
+                        <th data-sortable="true" data-field="precVal" scope="col">Precision Values</th>
+                        <th data-sortable="true" data-field="avgClassPrec"scope="col"> Average Class Precision</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    <% for (i in results) { %>
+                        <tr>
+                        <th scope="row"></th>
+                        <td><%= i+': ' %></td>
+                            <% for (j in results[i]) { %>
+                                <td><%= results[i][j] %></td>
+                        <% } %>
+                        </tr>
+                    <% } %>  
+                    </tbody>
+                  </table>
+                </div>
             <div class="container mt-4">
                 <h3>Inference Results:</h3>
             </div>
-                <!--Populate with items from imageUrls-->
+                <!--Populate with items from imageData-->
             <div class="row mt-6">
-                <% imageUrls.forEach(function(item) { %>
-                    
+                <% imageData.forEach(function(item) { %>      
                         <div class="card mb-4">
                             <div class="card-body">
-                                <h5 class="card-title">Card title</h5>
-                                <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                                <p class="card-text"><small class="text-muted">some more text</small></p>
+                                <h5 class="card-title"><b>Image: <%= item.name %></b></h5>
+                                <p class="card-text">Inference found classes with precision: </p>
+                                    <!--go through imageData.classesFound list for each image.-->
+                                    <% for(var i=0; i<item.classesFound.length; i++){ %>
+                                        <strong><%= i+1+') '+item.classesFound[i] %><br></strong>
+                                    <% } %>        
                             </div>
-                            <a href="<%= item.value %>" target="_blank">
-                                <img src="<%= item.value %>" class="card-img-top border border-primary" alt="Inference result image">
+                            <a href="<%= item.url %>" target="_blank">
+                                <img src="<%= item.url %>" class="card-img-top border border-primary" alt="Inference result image">
                             </a>
                         </div>
                     
@@ -48,7 +74,8 @@
     <%- include('footer.ejs') %>
     <%- include('scripts.ejs') %>
     <script>
-            $('#picture').on('change',function(){
+        //form and form inputs
+            $('#image').on('change',function(){
                 //get the file name
                 var fileName = $(this).val();
                 console.log(fileName)
@@ -56,6 +83,7 @@
                 $(this).next('.custom-file-label').html(fileName)
             })
         
+        //
         $(document).ready(function(){
         //When form is submitted, prevent default behaviour-reload and await response from server.
             $("#sendimage").on('submit',function(e){
@@ -66,7 +94,7 @@
                 
                 //Encode data from form
                 var fd = new FormData()
-                var files = $('#picture')[0].files[0]
+                var files = $('#image')[0].files[0]
                 console.log(files)
                 fd.append('file',files)
                 if (files != undefined) {
@@ -91,6 +119,9 @@
                 }
             });
         });
+
+        //table sorting
+
     </script>
   </body>
 

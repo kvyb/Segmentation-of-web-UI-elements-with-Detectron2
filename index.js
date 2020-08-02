@@ -59,8 +59,11 @@ app.get('/', (req, res) => {
         }
 
         //set up array to store links to images, to show on main screen.
-        var imageUrls = []
+        var imageData = []
+        //outputData will store output from inference for each file and all classes. This will allow to make counts.
         var outputData = ''
+        //results contains all encountered classes in total for all inferences and shows statistics. See below.
+        var results = []
         //push all files as dictionaries into list to easily parse them into .ejs template. Using forEach. :
         if (files.length) {
             var outputDataFilePath = 'inferenceContent/outputData/outputData.json'
@@ -69,52 +72,56 @@ app.get('/', (req, res) => {
             } else {
                 try {
                     outputData = await readFileAsync(outputDataFilePath)
-                    let result = {}
                     // Map objects
                     Object.keys(outputData.imageData).forEach(key => {
                         let items = outputData.imageData[key]
                         items.forEach(item => {
+                            //split because Detectron2 lables contain predicted classname and confidence as string
                             let itemClassName = item.split(' ')[0]
                             let itemClassValue = item.split(' ')[1]
                             if (outputData.AllClasses.includes(itemClassName)) {
-                                if (itemClassName in result) {
-                                    result[itemClassName].count++
-                                    result[itemClassName].values.push(itemClassValue)
+                                if (itemClassName in results) {
+                                    //increment counter for existing class initialised below
+                                    results[itemClassName].count++
+                                    results[itemClassName].values.push(itemClassValue)
                                 } else {
+                                    //initialise if there is a class which has been predicted
                                     let value = { count: 1, values: [itemClassValue], average: 0 }
-                                    result[itemClassName] = value
+                                    results[itemClassName] = value
                                 }
                             }
                         })
                     })
 
-                    // Count average percentage
-
-                    Object.keys(result).forEach(key => {
-                        let item = result[key]
+                    // Count average percision percentage for each found class
+                    Object.keys(results).forEach(key => {
+                        let item = results[key]
                         if (item.count > 1) {
                             let total = item.values.reduce((acc, value) => {
                                 return acc + parseInt(value.split('%')[0])
                             }, 0)
                             let average = total / item.values.length
-                            result[key].average = average
+                            results[key].average = average
                         } else {
-                            result[key].average = parseInt(item.values[0].split('%')[0])
+                            results[key].average = parseInt(item.values[0].split('%')[0])
                         }
                     })
-
-                    console.log(result)
-                    console.log(outputData)
 
                 } catch (error) {
                     throw error
                 }
             }
             files.forEach(function (file) {
+                //imageData is composed here to transfer data to our index.ejs template.
+                //Data from here will be used to render our html file.
                 //unshift newer images to appear on top, to avoid having to sort on client.
-                imageUrls.unshift({
+                //add image statistical data from inference to each image, parsed above, from outputData.
+                imageData.unshift({
                     key: 'image',
-                    value: directoryShortPath + file
+                    name: file,
+                    classesFound: outputData.imageData[file],
+                    url: directoryShortPath + file
+
                 })
             })
 
@@ -123,10 +130,16 @@ app.get('/', (req, res) => {
             console.log('No images to fetch from output directory. Upload an image for inference.')
         }
 
+        console.log('results:', results)
+        console.log('outputdata:', outputData)
+        console.log('imageData:', imageData)
+
         //output list of images present at home directory load. Pass object as itself to index.ejs.
         res.render('index', {
-            imageUrls,
-            outputData
+            //results for overall averages and class information. 
+            //Takes into account all inferenced images since project has been wiped.
+            results,
+            imageData
         })
 
     })
