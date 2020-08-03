@@ -32,7 +32,7 @@ const upload = multer({ storage })
 app.use(express.static('public'))
 app.use(express.static('inferenceContent'))
 
-//Function for async read JSON
+//Function for async read JSON used later
 function readFileAsync(path) {
     return new Promise((resolve, reject) => {
         fs.readFile(path, (err, data) => {
@@ -66,6 +66,7 @@ app.get('/', (req, res) => {
         var results = []
         //push all files as dictionaries into list to easily parse them into .ejs template. Using forEach. :
         if (files.length) {
+            //This JSON is used to transport data from Detectron2 to Nodejs
             var outputDataFilePath = 'inferenceContent/outputData/outputData.json'
             if (!fs.existsSync(outputDataFilePath)) {
                 console.log("No inference output to display yet.")

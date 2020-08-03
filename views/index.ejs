@@ -1,102 +1,111 @@
 <!doctype html>
 <html lang="en">
 <%- include('head.ejs') %>
-  <body style="background-color:#E5E5E5 !important;">
+
+<body style="background-color:#E5E5E5 !important;">
     <%- include('header.ejs') %>
     <main>
         <div class="container mt-4">
             <div class="container mt-4">
-            <h4>Run model inference with an image:</h4>
+                <h4>Run model inference with an image:</h4>
             </div>
         </div>
-        <div class="container mt-4 mb-4"> 
+        <div class="container mt-4 mb-4">
             <div class="custom-file">
                 <form id="sendimage" enctype="multipart/form-data">
                     <input type="file" id="image" class="custom-file-input" name="file">
                     <label class="custom-file-label" for="customFile">Choose a .PNG image file</label>
                     <button type="submit" id="custom-file-label" class="btn btn-primary mt-4 float-right">
-                    <span class="" id="loader" role="status" aria-hidden="true"></span>
-                    Submit
+                        <span class="" id="loader" role="status" aria-hidden="true"></span>
+                        Submit
                     </button>
                 </form>
             </div>
         </div>
         <div class="container mt-4 pt-4">
+            <p class="lead mt-4 pt-4">
+                <mark>Note:</mark> Data is persistent and inference result images list will remain until server wipe.
+                Summary of results is automatically updated at every inference.
+            </p>
+        </div>
+        <div class="container">
             <div class="mt-4 pt-4 mb-4 pb-4 table-responsive">
+                <h3 class="display-4 mb-4">Summary of results:</h3>
                 <table id="summary" class="table" data-toggle="table" data-pagination="true">
                     <thead class="thead-light">
-                      <tr>
-                        <th scope="col"></th>
-                        <th data-sortable="true" data-field="className" scope="col">Class Name</th>
-                        <th data-sortable="true" data-field="classCount" scope="col">Class Count</th>
-                        <th data-sortable="true" data-field="precVal" scope="col">Precision Values</th>
-                        <th data-sortable="true" data-field="avgClassPrec"scope="col"> Average Class Precision</th>
-                      </tr>
+                        <tr>
+                            <th scope="col"></th>
+                            <th data-sortable="true" data-field="className" scope="col">Class Name</th>
+                            <th data-sortable="true" data-field="classCount" scope="col">Class Count</th>
+                            <th data-sortable="true" data-field="precVal" scope="col">Precision Values</th>
+                            <th data-sortable="true" data-field="avgClassPrec" scope="col"> Average Class Precision</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <% for (i in results) { %>
+                        <% for (i in results) { %>
                         <tr>
-                        <th scope="row"></th>
-                        <td><%= i+': ' %></td>
+                            <th scope="row"></th>
+                            <td><%= i+': ' %></td>
                             <% for (j in results[i]) { %>
-                                <td><%= results[i][j] %></td>
-                        <% } %>
+                            <td><%= results[i][j] %></td>
+                            <% } %>
                         </tr>
-                    <% } %>  
+                        <% } %>
                     </tbody>
-                  </table>
-                </div>
-            <div class="container mt-4">
-                <h3>Inference Results:</h3>
+                </table>
             </div>
-                <!--Populate with items from imageData-->
+            <div class="container mt-4">
+                <h3 class="display-4 mb-4">Inference Results:</h3>
+            </div>
+            <!--Populate with items from imageData-->
             <div class="row mt-6">
-                <% imageData.forEach(function(item) { %>      
-                        <div class="card mb-4">
-                            <div class="card-body">
-                                <h5 class="card-title"><b>Image: <%= item.name %></b></h5>
-                                <p class="card-text">Inference found classes with precision: </p>
-                                    <!--go through imageData.classesFound list for each image.-->
-                                    <% for(var i=0; i<item.classesFound.length; i++){ %>
-                                        <strong><%= i+1+') '+item.classesFound[i] %><br></strong>
-                                    <% } %>        
-                            </div>
-                            <a href="<%= item.url %>" target="_blank">
-                                <img src="<%= item.url %>" class="card-img-top border border-primary" alt="Inference result image">
-                            </a>
-                        </div>
-                    
+                <% imageData.forEach(function(item) { %>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title"><b>Image: <%= item.name %></b></h5>
+                        <p class="card-text">Inference found classes with precision: </p>
+                        <!--go through imageData.classesFound list for each image.-->
+                        <% for(var i=0; i<item.classesFound.length; i++){ %>
+                        <strong><%= i+1+') '+item.classesFound[i] %><br></strong>
+                        <% } %>
+                    </div>
+                    <a href="<%= item.url %>" target="_blank">
+                        <img src="<%= item.url %>" class="card-img-top border border-primary"
+                            alt="Inference result image">
+                    </a>
+                </div>
+
                 <% }); %>
             </div>
         </div>
-        <hr/>
+        <hr />
     </main>
     <%- include('footer.ejs') %>
     <%- include('scripts.ejs') %>
     <script>
         //form and form inputs
-            $('#image').on('change',function(){
-                //get the file name
-                var fileName = $(this).val();
-                console.log(fileName)
-                //replace the "Choose a file" label
-                $(this).next('.custom-file-label').html(fileName)
-            })
-        
-        //
-        $(document).ready(function(){
-        //When form is submitted, prevent default behaviour-reload and await response from server.
-            $("#sendimage").on('submit',function(e){
-                e.preventDefault();
-                
+        $('#image').on('change', function () {
+            //get the file name
+            var fileName = $(this).val();
+            console.log(fileName)
+            //replace the "Choose a file" label
+            $(this).next('.custom-file-label').html(fileName)
+        })
 
-                
-                
+        //
+        $(document).ready(function () {
+            //When form is submitted, prevent default behaviour-reload and await response from server.
+            $("#sendimage").on('submit', function (e) {
+                e.preventDefault();
+
+
+
+
                 //Encode data from form
                 var fd = new FormData()
                 var files = $('#image')[0].files[0]
                 console.log(files)
-                fd.append('file',files)
+                fd.append('file', files)
                 if (files != undefined) {
                     //Show loader
                     $("#loader").addClass("spinner-border spinner-border-sm");
@@ -108,7 +117,7 @@
                         contentType: false,
                         processData: false,
                         //Server waits until the inference and shell finish. Only after a success message arrives.
-                        success: function(response){
+                        success: function (response) {
                             $("#loader").removeClass("spinner-border spinner-border-sm");
                             //Reload when new inference results obtained
                             window.location.reload();
@@ -123,6 +132,6 @@
         //table sorting
 
     </script>
-  </body>
+</body>
 
 </html>

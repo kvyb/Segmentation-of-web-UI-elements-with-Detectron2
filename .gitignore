@@ -2,3 +2,6 @@
 output/*
 node_modules/
 test.py
+=2.0.1
+.vscode/
+__pychache__/
