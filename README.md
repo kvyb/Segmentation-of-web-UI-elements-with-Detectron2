@@ -84,7 +84,7 @@ The model weights are not included in this repository, since the trained weights
 
     $ python main.py
 
-Alternatively the weights can be downloaded here: 'link' - and placed within 'output/' directory.
+Alternatively the weights and checkpoint folder can be downloaded here: ['link'](https://drive.google.com/drive/folders/1uPjHWBYHyAh6wSqbnlC-8xg8S3DUi7b3?usp=sharing) - all contents to be placed within 'output/' directory.
 **Output:**
 to graphically visualise and get very detailed data about model performance, after training completes, run:
 
