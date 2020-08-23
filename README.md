@@ -97,7 +97,9 @@ then:
 
     $ npm run dev
 
-The app will then be ready and serve on port 3000
+The app will then be ready and serve on port 3000.
+Important note: if the webserver is launched from a virtual environment like conda, you must activate the environment. Otherwise, the python scripts called by the webserver will not work.
+
 
 
 

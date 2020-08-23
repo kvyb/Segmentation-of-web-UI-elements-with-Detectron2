@@ -73,11 +73,11 @@ app.get('/', (req, res) => {
             } else {
                 try {
                     outputData = await readFileAsync(outputDataFilePath)
-                    // Map objects
+                    // Map objects together, for each image:
                     Object.keys(outputData.imageData).forEach(key => {
                         let items = outputData.imageData[key]
                         items.forEach(item => {
-                            //split because Detectron2 lables contain predicted classname and confidence as string
+                            //split because Detectron2 lables contain predicted classname and confidence as string with values separated by space
                             let itemClassName = item.split(' ')[0]
                             let itemClassValue = item.split(' ')[1]
                             if (outputData.AllClasses.includes(itemClassName)) {
