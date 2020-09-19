@@ -64,7 +64,7 @@ app.get('/', (req, res) => {
         var outputData = ''
         //results contains all encountered classes in total for all inferences and shows statistics. See below.
         var results = []
-        //push all files as dictionaries into list to easily parse them into .ejs template. Using forEach. :
+        // Check that files are not empty, and outputData from model exists.
         if (files.length) {
             var outputDataFilePath = 'inferenceContent/outputData/outputData.json'
             if (!fs.existsSync(outputDataFilePath)) {
@@ -72,11 +72,12 @@ app.get('/', (req, res) => {
             } else {
                 try {
                     outputData = await readFileAsync(outputDataFilePath)
-                    // Map objects
+                    // Map objects together, for each image:
                     Object.keys(outputData.imageData).forEach(key => {
+                        // Store all image keys
                         let items = outputData.imageData[key]
                         items.forEach(item => {
-                            //split because Detectron2 lables contain predicted classname and confidence as string
+                            //split because Detectron2 lables contain predicted classname and confidence as string with values separated by space
                             let itemClassName = item.split(' ')[0]
                             let itemClassValue = item.split(' ')[1]
                             if (outputData.AllClasses.includes(itemClassName)) {
@@ -193,6 +194,6 @@ app.post('/form', upload.single('file'), async (req, res) => {
 })
 
 // SERVE APPLICATION
-app.listen(3000, () => {
-    console.log('App is working on port 3000')
+app.listen(3001, () => {
+    console.log('App is working on port 3001')
 })

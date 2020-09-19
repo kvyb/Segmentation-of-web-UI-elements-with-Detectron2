@@ -1,0 +1,4 @@
+This is how the bounding boxes are given:
+
+Boxes(tensor([[236.7203, 401.2793, 668.6824, 465.7757],
+        [240.6268, 701.3158, 675.2419, 790.2629]], device='cuda:0'))

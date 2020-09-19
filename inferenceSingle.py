@@ -10,9 +10,7 @@ import numpy as np
 from cv2 import cv2
 import random
 import os
-import glob
 import argparse
-
 
 # import some common detectron2 utilities
 from detectron2 import model_zoo
@@ -33,7 +31,6 @@ args = parser.parse_args()
 #Register dataset annotations in coco format. This is important for metadata used by Detectron, for example in inference.
 register_coco_instances("my_dataset_train", {}, "content/train/_annotations.coco.json", "content/train")
 register_coco_instances("my_dataset_val", {}, "content/valid/_annotations.coco.json", "content/valid")
-register_coco_instances("my_dataset_test", {}, "content/test/_annotations.coco.json", "content/test")
 
 #Get metadata from training set, to provide metadata during inference. 
 #This metadata allows the predictor to assign predictions to human-readable classes for output.
@@ -48,8 +45,8 @@ cfg.DATASETS.TEST = ("my_dataset_val",)
 cfg.DATALOADER.NUM_WORKERS = 2
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.001
-cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 32
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = 31 #your number of classes + 1
+cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 64
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = 12 #your number of classes + 1
 
 # Inference with Detectron2 Saved Weights on a previously unknown image
 
@@ -101,7 +98,7 @@ if imageName:
     imagePredClasses = outputs["instances"].pred_classes
     imagePredBoxes = outputs["instances"].pred_boxes
     imagePredScores = outputs["instances"].scores
-
+    print(outputs["instances"].pred_boxes)
     #previously initialised dict for storing image output. Inside it make another key:value pair with key as image name, and value as inference output values array.
     dataCollection['imageData'][imageBaseName] = _create_text_labels(outputs["instances"].pred_classes, outputs["instances"].scores, my_dataset_train_metadata.get("thing_classes", None))
 
@@ -120,11 +117,3 @@ if imageName:
     # Save images with predictions to savePath folder and imageName with path to image removed from name.
     savePath = './inferenceContent/output'
     cv2.imwrite(os.path.join(savePath , imageBaseName), out.get_image()[:, :, ::-1])
-    
-    # Create a JSON object and append results for each image.
-
-
-# Save JSON object.
-#with open('inferenceContent/output/infOutputData.json', 'w', encoding='utf-8') as f:  
-#json.dump(data, f, ensure_ascii=False, indent=4)
-#Todo: Run test and inference on the same image (1), to get the text output of findings and the image visualization
